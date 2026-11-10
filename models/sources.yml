@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: retail_source
+    database: gen-lang-client-0468502932
+    schema: sales_data
+    tables:
+      - name: raw_retail_sales
+        columns:
+          - name: order_id
+            data_tests:
+              - not_null

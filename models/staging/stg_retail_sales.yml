@@ -1,0 +1,23 @@
+
+version: 2
+
+models:
+  - name: stg_retail_sales
+    description: "Cleaned and standardised retail sales data."
+
+    columns:
+      - name: order_id
+        data_tests:
+          - not_null
+
+      - name: data_quality_status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - Valid
+                  - Missing order ID
+                  - Invalid order date
+                  - Invalid quantity
+                  - Invalid unit price
+                  - Missing product name
