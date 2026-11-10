@@ -2,9 +2,9 @@
 
 ## Project Overview
 
-This project demonstrates a retail analytics ELT pipeline using Google BigQuery and dbt Cloud.
+This project demonstrates an end-to-end retail analytics ELT pipeline using Google BigQuery and dbt Cloud.
 
-The objective is to take a messy retail sales dataset, clean and transform the data, apply data quality checks, and build analytical models that support business reporting and decision-making.
+The objective is to transform a messy retail sales dataset into clean, validated and business-ready analytical data.
 
 The dataset contains South African retail sales information, including orders, customers, products, sales regions, sales channels and order statuses.
 
@@ -12,9 +12,10 @@ The dataset contains South African retail sales information, including orders, c
 
 - Google BigQuery - Cloud data warehouse and SQL execution.
 - dbt Cloud - Data transformation, modelling and testing.
-- SQL - Data cleaning, validation, transformation and aggregation.
+- SQL - Data cleaning, validation and aggregation.
+- Jinja - Reusable SQL logic through dbt macros.
 - GitHub - Version control and project documentation.
-- Power BI - Planned reporting and visualisation stage.
+- Power BI - Planned reporting and visualisation.
 
 ## Data Pipeline Architecture
 
@@ -23,8 +24,9 @@ The project follows an ELT approach:
 1. Extract the raw retail sales CSV dataset.
 2. Load the source data into a raw BigQuery table.
 3. Transform and clean the data using dbt.
-4. Apply data quality tests.
-5. Build fact and analytical mart tables for reporting.
+4. Apply automated data quality tests.
+5. Build fact and analytical mart tables.
+6. Prepare business-ready data for reporting.
 
 ## Data Cleaning and Quality
 
@@ -52,6 +54,28 @@ The staging model applies:
 Invalid records are retained in staging for investigation rather than silently discarded.
 
 The fact model includes records classified as valid under the defined data quality rules.
+
+## dbt Macros
+
+The project uses a reusable Jinja macro to centralise date parsing logic.
+
+| Macro | Description |
+|---|---|
+| `parse_retail_date` | Parses multiple date formats using BigQuery safe date parsing. |
+
+The macro supports:
+
+- `YYYY-MM-DD`
+- `DD/MM/YYYY`
+- `MM/DD/YYYY`
+
+It is called from the staging model using:
+
+`{{ parse_retail_date('order_date') }}`
+
+This reduces duplicated SQL logic and makes the transformation easier to maintain and reuse.
+
+The macro was compiled successfully, and the staging model was successfully executed using it.
 
 ## dbt Data Models
 
@@ -131,13 +155,15 @@ The five fact and mart models were successfully materialised and checked in BigQ
 
 ## Future Improvements
 
+- Add reusable macros for text standardisation.
+- Introduce dbt seeds for reference data.
+- Implement snapshots to track historical data changes.
 - Connect analytical marts to Power BI.
 - Build an interactive sales performance dashboard.
 - Expand automated data quality testing.
 - Add dbt documentation and model lineage.
-- Improve data quality monitoring.
 
 ## Skills Demonstrated
 
-SQL development, Google BigQuery, dbt Cloud, ELT pipelines, data cleaning, data quality validation, dimensional modelling, analytical data marts, business analysis and GitHub version control.
+SQL development, Google BigQuery, dbt Cloud, ELT pipelines, Jinja macros, data cleaning, data quality validation, dimensional modelling, analytical data marts, business analysis and GitHub version control.
 
