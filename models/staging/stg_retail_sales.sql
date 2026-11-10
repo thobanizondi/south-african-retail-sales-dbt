@@ -14,11 +14,7 @@ cte_Cleaned_data AS (
     SELECT
         NULLIF(TRIM(order_id), '') AS order_id,
 
-        COALESCE(
-            SAFE.PARSE_DATE('%Y-%m-%d', TRIM(order_date)),
-            SAFE.PARSE_DATE('%d/%m/%Y', TRIM(order_date)),
-            SAFE.PARSE_DATE('%m/%d/%Y', TRIM(order_date))
-        ) AS order_date,
+        {{ parse_retail_date('order_date') }} AS order_date,
 
         NULLIF(TRIM(customer_name), '') AS customer_name,
         LOWER(NULLIF(TRIM(customer_email), '')) AS customer_email,
