@@ -10,11 +10,11 @@ The dataset contains South African retail sales information, including orders, c
 
 ## Technologies Used
 
-- **Google BigQuery** – Cloud data warehouse and SQL execution.
-- **dbt Cloud** – Data transformation, modelling and testing.
-- **SQL** – Data cleaning, validation, transformation and aggregation.
-- **GitHub** – Version control and project documentation.
-- **Power BI** – Planned for the reporting and visualisation stage.
+- **Google BigQuery** - Cloud data warehouse and SQL execution.
+- **dbt Cloud** - Data transformation, modelling and testing.
+- **SQL** - Data cleaning, validation, transformation and aggregation.
+- **GitHub** - Version control and project documentation.
+- **Power BI** - Planned for the reporting and visualisation stage.
 
 ## Data Pipeline Architecture
 
