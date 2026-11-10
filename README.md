@@ -2,33 +2,33 @@
 
 ## Project Overview
 
-This project demonstrates an end-to-end retail analytics pipeline using Google BigQuery and dbt Cloud.
+This project demonstrates a retail analytics ELT pipeline using Google BigQuery and dbt Cloud.
 
-The goal was to take an intentionally messy retail sales dataset, clean and transform the data, apply data quality checks, and build analytical models that support business reporting and decision-making.
+The objective is to take a messy retail sales dataset, clean and transform the data, apply data quality checks, and build analytical models that support business reporting and decision-making.
 
 The dataset contains South African retail sales information, including orders, customers, products, sales regions, sales channels and order statuses.
 
 ## Technologies Used
 
-- **Google BigQuery** - Cloud data warehouse and SQL execution.
-- **dbt Cloud** - Data transformation, modelling and testing.
-- **SQL** - Data cleaning, validation, transformation and aggregation.
-- **GitHub** - Version control and project documentation.
-- **Power BI** - Planned for the reporting and visualisation stage.
+- Google BigQuery - Cloud data warehouse and SQL execution.
+- dbt Cloud - Data transformation, modelling and testing.
+- SQL - Data cleaning, validation, transformation and aggregation.
+- GitHub - Version control and project documentation.
+- Power BI - Planned reporting and visualisation stage.
 
 ## Data Pipeline Architecture
 
-The project follows a simple ELT (Extract, Load, Transform) approach:
+The project follows an ELT approach:
 
-1. **Extract:** Obtain the raw retail sales CSV dataset.
-2. **Load:** Load the source data into a raw BigQuery table.
-3. **Transform:** Use dbt to clean, standardise and transform the data.
-4. **Test:** Apply data quality tests to validate key fields and quality classifications.
-5. **Model:** Build fact and analytical mart tables for reporting.
+1. Extract the raw retail sales CSV dataset.
+2. Load the source data into a raw BigQuery table.
+3. Transform and clean the data using dbt.
+4. Apply data quality tests.
+5. Build fact and analytical mart tables for reporting.
 
 ## Data Cleaning and Quality
 
-The raw dataset contains common data quality issues, including:
+The raw dataset contains common data quality issues:
 
 - Duplicate records.
 - Missing values.
@@ -39,19 +39,19 @@ The raw dataset contains common data quality issues, including:
 - Inconsistent sales region and channel values.
 - Missing and unknown order statuses.
 
-The staging model applies transformations such as:
+The staging model applies:
 
-- Removing exact duplicate records.
-- Filtering out the accidentally imported CSV header row.
-- Standardising text fields.
-- Converting dates using safe date parsing.
-- Converting numeric fields using safe casting.
-- Calculating total sales values.
-- Assigning data quality statuses to records.
+- Exact duplicate removal.
+- Filtering of the imported CSV header row.
+- Text standardisation.
+- Safe date parsing.
+- Safe numeric casting.
+- Total sales calculation.
+- Data quality status classification.
 
-Invalid records are retained in the staging layer for investigation rather than silently discarded.
+Invalid records are retained in staging for investigation rather than silently discarded.
 
-The fact model includes records classified as valid by the defined data quality rules.
+The fact model includes records classified as valid under the defined data quality rules.
 
 ## dbt Data Models
 
@@ -59,7 +59,7 @@ The fact model includes records classified as valid by the defined data quality 
 
 | Model | Description |
 |---|---|
-| `stg_retail_sales` | Cleans, standardises and validates the raw retail sales data. |
+| `stg_retail_sales` | Cleans, standardises and validates raw retail sales data. |
 
 ### Fact and Analytical Marts
 
@@ -75,8 +75,6 @@ The fact model includes records classified as valid by the defined data quality 
 
 After removing exact duplicates and the imported header row, the staging model contained 2,500 records.
 
-The data quality classification produced the following results:
-
 | Data quality status | Records |
 |---|---:|
 | Valid | 2,387 |
@@ -86,39 +84,42 @@ The data quality classification produced the following results:
 | Invalid order date | 25 |
 | **Total** | **2,500** |
 
-The classifications follow a priority-based CASE statement. Each record receives its first matching issue, so the categories are mutually exclusive.
+The classifications use a priority-based CASE statement. Each record receives its first matching issue, so the categories are mutually exclusive.
+
+## Custom SQL Tests
+
+Standalone SQL tests are maintained in the `tests/` directory. These tests return failing records when a business rule is violated. A test passes when it returns zero rows.
+
+| Test file | Validation |
+|---|---|
+| `assert_positive_sales.sql` | Checks that quantities, unit prices and total sales are positive. |
+| `assert_required_sales_fields.sql` | Checks that required fact table fields are populated. |
+| `assert_sales_calculation.sql` | Checks that total sales equals quantity multiplied by unit price. |
+| `assert_valid_sales_channels.sql` | Checks standardised sales channel values. |
+| `assert_valid_sales_regions.sql` | Checks standardised sales region values. |
+| `assert_valid_order_statuses.sql` | Checks allowed order status values. |
+
+The project also includes YAML-based dbt tests for source and staging model validation.
 
 ## Business Insights
 
 The fact model contains 2,387 records classified as valid under the project's data quality rules.
 
-Key findings include:
+Key findings:
 
-- **Recorded sales value:** R121,488,702.88.
-- **Average sales value per record:** R50,895.98.
-- **Units sold:** 9,566.
-- **Top-performing region by recorded sales value:** Limpopo, with R25,828,856.27.
-- **Top-performing product category:** Electronics, with R32,188,506.50.
-- **Top-performing sales channel:** Online, with R32,858,587.70.
-- **Strongest month:** June 2025, with R13,679,464.44 in recorded sales value.
+- Recorded sales value: R121,488,702.88.
+- Average sales value per record: R50,895.98.
+- Total units sold: 9,566.
+- Highest sales value by region: Limpopo, R25,828,856.27.
+- Highest sales value by product category: Electronics, R32,188,506.50.
+- Highest sales value by sales channel: Online, R32,858,587.70.
+- Strongest month: June 2025, with R13,679,464.44 in recorded sales value.
 
 These are recorded sales values across different order statuses, including completed, pending, cancelled and returned orders. They should not be interpreted as recognised revenue.
 
-## Validation and Testing
+## Model Validation Results
 
-dbt data tests were executed successfully.
-
-The configured tests include:
-
-- `not_null` validation for the staging order ID.
-- `accepted_values` validation for data quality status classifications.
-- Source-level order ID validation.
-
-**Test result:** 3 tests passed with no failures.
-
-All five fact and mart models were also successfully materialised and checked in BigQuery.
-
-## Project Results
+The five fact and mart models were successfully materialised and checked in BigQuery.
 
 | Model | Records |
 |---|---:|
@@ -130,11 +131,11 @@ All five fact and mart models were also successfully materialised and checked in
 
 ## Future Improvements
 
-- Connect the analytical marts to Power BI.
+- Connect analytical marts to Power BI.
 - Build an interactive sales performance dashboard.
-- Expand dbt tests across the fact and mart models.
+- Expand automated data quality testing.
 - Add dbt documentation and model lineage.
-- Improve monitoring of data quality issues.
+- Improve data quality monitoring.
 
 ## Skills Demonstrated
 
